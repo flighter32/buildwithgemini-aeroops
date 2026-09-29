@@ -108,6 +108,9 @@ async def _get_card(client: httpx.AsyncClient) -> AgentCard:
         # Agent Runtime does not serve a public card URL, so point the client at
         # the passthrough base for message sends.
         card.url = A2A_BASE
+        if getattr(card, "additional_interfaces", None):
+            for iface in card.additional_interfaces:
+                iface.url = A2A_BASE
         _card = card
     return _card
 
@@ -191,7 +194,8 @@ async def chat(req: Request):
 
 
 # Serve the chat UI (keep this mount last so /chat wins).
-app.mount("/", StaticFiles(directory="static", html=True), name="static")
+_static_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "static")
+app.mount("/", StaticFiles(directory=_static_dir, html=True), name="static")
 
 
 if __name__ == "__main__":
