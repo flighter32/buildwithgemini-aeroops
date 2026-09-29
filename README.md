@@ -1,198 +1,144 @@
 <div align="center">
 
-<img src="assets/build-with-gemini-banner.png" alt="Build with Gemini" width="100%" />
+# ✈️ AeroOps: Airport Operations & Flight Dispatch Assistant
 
-# 🚀 Build with Gemini · Track 3
+### An intelligent operations assistant for ground handlers, station managers, and ramp dispatchers — combining real-time flight telemetry, dynamic Google Maps overlays, and generative AI visual dispatch cards.
 
-### The starter kit for Track 3 of the Build with Gemini World Tour, and a showcase of what participants built with it.
-
-Clone this repo, open [Antigravity](https://antigravity.google), and build your own agent-first app on Google Cloud. Every project in the [gallery below](#-featured-projects) was built the same way: prototyped with Antigravity and `agents-cli`, equipped with Memory, tools, and storage, deployed to Agent Platform, and given a face on Cloud Run.
+![AeroOps Demo](assets/demo.gif)
 
 <br/>
 
 ![Build with Gemini](https://img.shields.io/badge/Build%20with%20Gemini-World%20Tour-4285F4?logo=google&logoColor=white)
-![Track 3](https://img.shields.io/badge/Track%203-Agent--First%20Apps-EA4335)
-![Google Cloud](https://img.shields.io/badge/Google%20Cloud-Agent%20Platform-4285F4?logo=googlecloud&logoColor=white)
-![Built with ADK](https://img.shields.io/badge/Built%20with-ADK%20%2B%20agents--cli-34A853)
-![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen)
-![Projects](https://img.shields.io/badge/Projects-8-blue)
-
-<sub>📖 <a href="https://cszhu.github.io/build-with-gemini/">Lab Guide</a> · 🛠️ <a href="https://google.github.io/agents-cli/guide/getting-started/">agents-cli</a> · 🤖 <a href="https://google.github.io/adk-docs/">ADK</a></sub>
+![Google Cloud](https://img.shields.io/badge/Google%20Cloud-Vertex%20AI%20%2B%20Storage-4285F4?logo=googlecloud&logoColor=white)
+![Built with ADK](https://img.shields.io/badge/Built%20with-ADK%201.1.0-34A853)
+![Python](https://img.shields.io/badge/Python-3.13%2B-blue)
+![UI](https://img.shields.io/badge/UI-A2UI%20v0.8%20%2B%20FastAPI-00e5ff)
 
 </div>
 
 ---
 
-## 📚 Table of Contents
+## 📖 Overview
 
-- [🧩 Anatomy of a Track 3 Project](#-anatomy-of-a-track-3-project)
-- [📂 Featured Projects](#-featured-projects)
-  - [🛍️ Commerce & Marketplace Agents](#️-commerce--marketplace-agents)
-  - [🍳 Food & Recipe Agents](#-food--recipe-agents)
-  - [✈️ Travel & Local Agents](#️-travel--local-agents)
-  - [💪 Health, Fitness & Wellness Agents](#-health-fitness--wellness-agents)
-  - [📚 Learning & Knowledge Agents](#-learning--knowledge-agents)
-  - [🎨 Creative & Media Agents](#-creative--media-agents)
-  - [🏢 Productivity & Enterprise Agents](#-productivity--enterprise-agents)
-  - [🧪 Experimental & Other](#-experimental--other)
-- [🧠 What's in this Repo](#-whats-in-this-repo)
-- [🧰 Build Your Own](#-build-your-own)
-- [📚 Resources](#-resources)
-- [🤝 Contributing](#-contributing)
-- [📄 License](#-license)
+**AeroOps** is an agentic AI operations assistant built with Google's **Agent Development Kit (ADK)** and **Gemini 3.6 Flash**. Designed for airport operations centers and ground crew teams, AeroOps tracks active commercial flights, verifies aircraft registrations, computes turnaround service buffers, and renders rich visual dispatch cards right inside the dialogue interface.
+
+### What AeroOps Does
+
+- **Live Flight & Airspace Telemetry**: Queries real-time flight details and aircraft registrations (tail numbers / Mode S hex) via the **AviationStack API**, with OpenSky ADS-B vector fallbacks.
+- **Visual AI Dispatch Cards**: Generates composite visual flight cards combining live flight metrics, static **Google Maps** route plots, and a custom **Gemini Nano Banana Dispatch Mascot** generated on the fly.
+- **Ramp Turnaround & Gate Delay Modeling**: Models service cycles (deplaning, cabin cleaning, fueling, boarding) against gate buffers to calculate turnaround delays and flag on-time departure risks.
+- **Geocoding & Ground Amenities**: Resolves ground locations and nearby facilities using the Google Maps Geocoding and Places APIs.
+- **Agent-to-User Interface (A2UI)**: Returns clean markdown text or rich display cards through A2UI v0.8 depending on user intent.
+- **Tactical ATC / Cockpit Web UI**: Includes a custom dark-mode operations console featuring live UTC clocks, radar telemetry badges, prompt chips, and integrated A2UI card rendering.
 
 ---
 
-## 🧩 Anatomy of a Track 3 Project
+## 🛠️ Implemented Architecture & Google Cloud Integrations
 
-Every app in this collection is built from the same set of Google Cloud building blocks introduced in the lab. Once you understand this shape, you can read any project here at a glance:
+Based on the codebase in `hello-world-agent/app/`:
 
-| Layer | What it does | Powered by |
-|---|---|---|
-| 🤖 **The Agent** | The core reasoning loop | [ADK](https://google.github.io/adk-docs/) + [`agents-cli`](https://google.github.io/agents-cli/guide/getting-started/), scaffolded with [Antigravity](https://antigravity.google) |
-| 🧠 **Memory** | Remembers facts across sessions | [Agent Platform Memory Bank](https://docs.cloud.google.com/gemini-enterprise-agent-platform/scale/memory-bank) |
-| 🗄️ **Structured data** | Inventory, records, lists | [Firestore](https://console.cloud.google.com/firestore) |
-| 🖼️ **Files & blobs** | Images, media, assets | [Cloud Storage](https://console.cloud.google.com/storage) |
-| 🔧 **Tools** | Take real actions and fetch real data | ADK function tools |
-| 🎨 **Media generation** | Creates images (and video) on demand | `gemini-3.1-flash-lite-image` (Nano Banana 2 Lite) · Omni (video) |
-| 🧪 **Code sandbox** | Safely runs generated code | Agent Platform code execution |
-| 🪟 **Agent-first UI** | Cards and tables instead of plain text | [A2UI](https://adk.dev/integrations/a2ui/) |
-| 🌐 **Frontend** | A shareable web face | FastAPI proxy on [Cloud Run](https://cloud.google.com/run) |
+| Component / Service | Implementation Details |
+|---|---|
+| **Core Reasoning Agent** | Powered by `gemini-3.6-flash` on Vertex AI via ADK (`Agent`, `App`, `A2uiSchemaManager`). |
+| **Image Generation** | Generates dispatch visuals using `gemini-3.1-flash-lite-image` via the Vertex AI API in the `global` region. |
+| **Google Cloud Storage (GCS)** | Public storage bucket for hosting generated flight cards, radar composites, and mascot assets. |
+| **A2UI Mini-Renderer** | Custom v0.8 specification catalog integration with dynamic `Image`, `Card`, `Column`, `Row`, and `Text` component surfaces. |
+| **Google Maps API** | Static Maps route lines, Geocoding API (`maps_tools.py`), and Places API (New). |
+| **AviationStack REST API** | Live flight lookup by flight IATA/ICAO code (e.g. `UA240`, `DL693`) and aircraft registration (e.g. `N552DT`). |
+| **ADK Local Artifact Service** | Persists generated flight card artifacts to the ADK session artifact store. |
 
----
-
-## 📂 Featured Projects
-
-A showcase of what workshop participants built with this lab. Entries are added here from the swag and gallery submission form after each event, so the categories below start empty and fill in over time. Browse them for inspiration, or [submit your own](#-contributing) once you've published your project with the `publish-to-github` skill.
-
-<!--
-Add one entry per project, in this format:
-- 🌿 **[Project Name](https://github.com/their-handle/their-repo)**: one-line description of what it does. <br/> <sub>by [@handle](https://github.com/handle)</sub>
-
-Bump the "Projects" badge count at the top when you add one.
--->
-
-### 🛍️ Commerce & Marketplace Agents
-
-### 🍳 Food & Recipe Agents
-
-- 🥫 **[Smart Pantry Recipe Concierge](https://github.com/matthewrose/buildwithgemini-smart-pantry-recipe-concierge)**: Tracks your pantry and recommends recipes grounded in a real recipe corpus. <br/> <sub>by [@matthewrose](https://github.com/matthewrose)</sub>
-
-### ✈️ Travel & Local Agents
-
-- ⛈️ **[SafeStageWX](https://github.com/felix1028/buildwithgemini-safestagewx)**: An agentic mobile app that helps event planners identify weather threats and climate risks for an event given its date and location, providing tailored preparedness timelines from months out down to hourly day-of forecasts. <br/> <sub>by [@felix1028](https://github.com/felix1028)</sub>
-- 🌇 **[Sidewalk & Sun](https://github.com/OlafHaalstra/buildwithgemini-sidewalk-and-sun)**: Recommends sunny or shaded NYC spots from a curated 500-venue corpus, plotted on an interactive map. <br/> <sub>by [@OlafHaalstra](https://github.com/OlafHaalstra)</sub>
-
-### 💪 Health, Fitness & Wellness Agents
-
-- 🏊 **[TriCoach AI](https://github.com/common-aman/buildwithgemini-tricoach-ai)**: A triathlon coach that logs workouts, computes training zones, and generates motivational visuals. <br/> <sub>by [@common-aman](https://github.com/common-aman)</sub>
-
-### 📚 Learning & Knowledge Agents
-
-- 🎤 **[Interview Coach (PrepPal)](https://github.com/VineethBaradi/buildwithgemini-interview-coach)**: A mock-interview coach that runs LLM-driven practice sessions from a Firestore question bank and gives performance feedback. <br/> <sub>by [@VineethBaradi](https://github.com/VineethBaradi)</sub>
-
-### 🎨 Creative & Media Agents
-
-### 🏢 Productivity & Enterprise Agents
-
-- 🔧 **[GitCraft](https://github.com/fpobletemu/buildwithgemini-gitcraft)**: A developer git assistant that inspects your repo and drafts Conventional-Commits-style messages, grounded in a commit-style guide. <br/> <sub>by [@fpobletemu](https://github.com/fpobletemu)</sub>
-- 🖥️ **[IT Helpdesk Agent](https://github.com/NaweedAhmadi/buildwithgemini-it-helpdesk-agent)**: An IT support assistant that answers from a knowledge base and remembers context across sessions, with a ticket dashboard UI. <br/> <sub>by [@NaweedAhmadi](https://github.com/NaweedAhmadi)</sub>
-
-### 🧪 Experimental & Other
-
-- 🃏 **[Poker Agent](https://github.com/jakecho1108/buildwithgemini-poker-agent)**: A poker trainer with a real 800-iteration Monte Carlo equity engine and strategy tips grounded in a poker playbook. <br/> <sub>by [@jakecho1108](https://github.com/jakecho1108)</sub>
+*(Note on Planned Features: Long-term multi-session Vertex AI Memory Bank and Firestore collections mentioned in earlier planning are planned for future iterations and not wired into the active agent pipeline.)*
 
 ---
 
-## 🧠 What's in this Repo
+## 🧰 Available Agent Tools
 
-The `.agents/` folder teaches Antigravity how to build agents on Google Cloud.
+The agent has the following tools registered in [`app/agent.py`](hello-world-agent/app/agent.py):
 
-### Skills
-
-A **skill** is a bundle of instructions that loads automatically when it's relevant, so the agent gets the workflow right in fewer steps instead of rediscovering it each time.
-
-| Skill | What it does |
-| --- | --- |
-| [`pick-your-agent-project`](.agents/skills/pick-your-agent-project/SKILL.md) | Brainstorm your app idea and write a project brief |
-| [`troubleshoot-lab-setup`](.agents/skills/troubleshoot-lab-setup/SKILL.md) | Verify your environment and fix common setup errors |
-| [`memory-bank-setup`](.agents/skills/setup-memory-bank/SKILL.md) | Add cross-session memory to your agent with Vertex AI Memory Bank |
-| [`enable-a2ui`](.agents/skills/enable-a2ui/SKILL.md) | Make your agent reply with rich UI cards (A2UI) in the ADK dev UI |
-| [`build-agent-frontend`](.agents/skills/build-agent-frontend/SKILL.md) | Generate a FastAPI chat frontend and ship it to Cloud Run |
-| [`record-demo`](.agents/skills/record-demo/SKILL.md) | Record a branded demo video of your agent, with an optional AI soundtrack |
-| [`publish-to-github`](.agents/skills/publish-to-github/SKILL.md) | Publish your finished project to your own GitHub and submit it for swag |
-
-### Pre-configured tools (MCP)
-
-[`.agents/mcp_config.json`](.agents/mcp_config.json) wires up two [Model Context Protocol](https://modelcontextprotocol.io/) servers that authenticate with your gcloud credentials, so the agent can look things up instead of guessing:
-
-- **Firebase**: work directly with Firestore and other Firebase services
-- **Google Developer Knowledge**: grounded access to Google's official docs (Cloud, Firebase, ADK, Agent Platform)
-
-### Layout
-
-```text
-.agents/
-├── mcp_config.json    # Firebase + Developer Knowledge MCP servers
-├── rules/             # workspace rules (only deploy when asked)
-└── skills/            # the workshop skills listed above
-```
+1. `generate_flight_map_card_with_banana(flight_or_aircraft)`: Fetches real-time flight/registration data, calls Google Maps Static API for the route, invokes `gemini-3.1-flash-lite-image` for the Nano Banana pilot mascot, composites them onto a dark radar canvas, and publishes it to Cloud Storage.
+2. `get_aviationstack_flight_details(query)`: Queries live flight schedule, route, departure/arrival gate, terminal, and aircraft information.
+3. `calculate_turnaround_delay(flight_number, gate, scheduled_turnaround_buffer_min)`: Analyzes passenger deplaning, cleaning, fueling, and boarding times against gate buffers.
+4. `render_airport_map(highlight_gate)`: Produces an ASCII apron/terminal gate status map for SFO.
+5. `render_flight_map(flight_number)`: Renders terminal approach progress and airway fix benchmarks.
+6. `list_live_air_traffic(airport_iata)`: Scans live ADS-B vectors, altitudes, ground speeds, and bearings from SFO.
+7. `query_live_flight_radar(callsign)`: Locates specific aircraft positions in local airspace.
+8. `geocode_address(address)`: Converts street or airport addresses to geographic coordinates via Google Maps.
+9. `find_nearby_places(latitude, longitude, place_type, radius_meters)`: Finds nearby amenities, hotels, and fuel depots using Google Places.
+10. `generate_dispatch_visual_map(flight_number, gate, prompt_hint)`: Generates a standalone dispatch image with Gemini image generation.
 
 ---
 
-## 🧰 Build Your Own
+## 🚀 Getting Started Locally
 
-The full, step-by-step walkthrough lives on the **[lab guide](https://cszhu.github.io/build-with-gemini/)**. This is the short version.
+### Prerequisites
 
-**Prerequisites** (the lab workstation comes with all of this pre-installed; you'll need it if you're running on your own machine):
+- Python 3.13+ and [`uv`](https://docs.astral.sh/uv/)
+- Google Cloud CLI (`gcloud`) authenticated with a project having Vertex AI enabled
+- Google Maps API key with Geocoding, Places, and Maps Static APIs enabled
+- AviationStack API key
 
-- A **Google Cloud project** with billing enabled
-- **[Antigravity](https://antigravity.google)** (`agy`), the coding agent that loads the skills above
-- **[agents-cli](https://google.github.io/agents-cli/guide/getting-started/)**, built on the [Agent Development Kit (ADK)](https://google.github.io/adk-docs/)
-- Authenticated gcloud: `gcloud auth login` and `gcloud auth application-default login`
-- A personal **GitHub account** for the final publish-and-submit step
-
-**Quickstart:**
+### 1. Clone & Setup Environment
 
 ```bash
-git clone https://github.com/cszhu/build-with-gemini
-cd build-with-gemini
-agy
+git clone https://github.com/flighter32/buildwithgemini-aeroops.git
+cd buildwithgemini-aeroops/hello-world-agent
+
+# Configure environment variables in .env
+cat <<EOF > .env
+GOOGLE_GENAI_USE_VERTEXAI=true
+GOOGLE_CLOUD_PROJECT=your-gcp-project-id
+GOOGLE_CLOUD_LOCATION=us-central1
+GOOGLE_MAPS_API_KEY=your-google-maps-api-key
+AVIATIONSTACK_API_KEY=your-aviationstack-api-key
+PUBLIC_GCS_BUCKET=your-public-gcs-bucket-name
+EOF
 ```
 
-On startup, Antigravity scans the `.agents/` folder and loads the skills and tools above automatically. In the AGY prompt:
+### 2. Install Dependencies
 
-```text
-/skills            # see the installed skills
-/mcp               # confirm the firebase + google-developer-knowledge tools are connected
+```bash
+uv sync
 ```
 
-```text
-Verify my setup.   # runs the troubleshoot-lab-setup skill to check your environment
+### 3. Launch the Agent Dev UI
+
+Run the ADK development playground:
+
+```bash
+uv run adk web --port 8080 --host 0.0.0.0 --reload_agents
 ```
 
-Then follow the [lab guide](https://cszhu.github.io/build-with-gemini/) to design, build, deploy, and share your agent, start to finish.
+Access the ADK playground at port `8080` in your browser.
+
+### 4. Launch the Tactical Frontend Console
+
+In a separate terminal, launch the custom AeroOps operations frontend:
+
+```bash
+export LOCAL_ADK_URL="http://127.0.0.1:8080"
+export PORT=8081
+uv run python -m uvicorn frontend.main:app --host 0.0.0.0 --port 8081
+```
+
+Access the AeroOps tactical console at port `8081`.
 
 ---
 
-## 📚 Resources
+## 💡 Example Queries
 
-- **[Lab guide](https://cszhu.github.io/build-with-gemini/)**: the step-by-step workshop
-- [Antigravity](https://antigravity.google)
-- [agents-cli](https://google.github.io/agents-cli/guide/getting-started/)
-- [Agent Development Kit (ADK)](https://google.github.io/adk-docs/)
-- [Gemini Enterprise Agent Platform](https://docs.cloud.google.com/gemini-enterprise-agent-platform)
-
----
-
-## 🤝 Contributing
-
-**Built something?** Publish it with the `publish-to-github` skill and submit it through the form it gives you. Submissions get you swag, and standout projects get added to the [Featured Projects](#-featured-projects) gallery above.
-
-**Found a bug?** If you hit a rough edge in a skill or the lab, please [open an issue](https://github.com/cszhu/build-with-gemini/issues).
+- **Live Flight Check (Text)**:
+  > *"What is the status and delay for flight UA240 as text?"*
+- **Visual AI Flight Card**:
+  > *"Where is flight UA240? Show flight map"*
+- **Aircraft Tail Search**:
+  > *"Inspect aircraft registration N552DT and show flight card"*
+- **Gate Turnaround Risk Analysis**:
+  > *"Estimate turnaround delay for flight UA240 at Gate B4"*
+- **Airspace Overview**:
+  > *"Show active flights in the local Bay Area airspace"*
 
 ---
 
 ## 📄 License
 
-This is not an officially supported Google product and is provided for the Build with Gemini workshop for demonstration purposes only.
+Apache License 2.0. Built for the Google Cloud *Build with Gemini* World Tour.
