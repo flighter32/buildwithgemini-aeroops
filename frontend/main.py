@@ -45,11 +45,13 @@ from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 
-RESOURCE = os.environ["AGENT_ENGINE_RESOURCE_NAME"]
+RESOURCE = os.environ.get("AGENT_ENGINE_RESOURCE_NAME", "")
+# Optional local ADK endpoint (e.g. http://127.0.0.1:8080) for testing with all local tools
+LOCAL_ADK_URL = os.environ.get("LOCAL_ADK_URL", "http://127.0.0.1:8080")
 # The agent's app directory (matches agent_directory in agents-cli-manifest.yaml).
 AGENT_DIRECTORY = os.environ.get("AGENT_DIRECTORY", "app")
 # Location is embedded in the resource name: projects/<p>/locations/<loc>/reasoningEngines/<id>.
-LOCATION = RESOURCE.split("/locations/")[1].split("/")[0]
+LOCATION = RESOURCE.split("/locations/")[1].split("/")[0] if "/locations/" in RESOURCE else "us-central1"
 
 # A2A endpoint for an Agent Runtime deployment, via the Agent Engine HTTP
 # passthrough. The card lives at the well-known path under this base.
@@ -140,6 +142,9 @@ def _extract_parts(parts: list) -> list[dict]:
     return out
 
 
+import base64
+import json
+
 @app.post("/chat")
 async def chat(req: Request):
     body = await req.json()
@@ -147,6 +152,58 @@ async def chat(req: Request):
     user_id = body.get("user_id") or "web-user"
     parts: list[dict] = []
 
+    # If LOCAL_ADK_URL is specified, route directly to the active local ADK agent instance
+    if LOCAL_ADK_URL:
+        async with httpx.AsyncClient(timeout=120) as client:
+            session_id = _contexts.get(user_id)
+            if not session_id:
+                s_resp = await client.post(
+                    f"{LOCAL_ADK_URL}/apps/{AGENT_DIRECTORY}/users/{user_id}/sessions",
+                    json={},
+                )
+                if s_resp.is_success:
+                    session_id = s_resp.json().get("id")
+                    _contexts[user_id] = session_id
+                else:
+                    session_id = str(uuid.uuid4())
+                    _contexts[user_id] = session_id
+
+            run_resp = await client.post(
+                f"{LOCAL_ADK_URL}/run",
+                json={
+                    "app_name": AGENT_DIRECTORY,
+                    "user_id": user_id,
+                    "session_id": session_id,
+                    "new_message": {"parts": [{"text": message}]},
+                },
+            )
+            run_resp.raise_for_status()
+            events = run_resp.json()
+
+            for ev in events:
+                cnt = ev.get("content", {})
+                for p in cnt.get("parts", []):
+                    if "text" in p and p["text"]:
+                        parts.append({"kind": "text", "text": p["text"]})
+                    elif "inlineData" in p:
+                        raw_b64 = p["inlineData"].get("data", "")
+                        pad = len(raw_b64) % 4
+                        if pad:
+                            raw_b64 += "=" * (4 - pad)
+                        try:
+                            dec = base64.urlsafe_b64decode(raw_b64).decode("utf-8", errors="ignore")
+                            if "<a2a_datapart_json>" in dec:
+                                json_str = dec.split("<a2a_datapart_json>")[1].split("</a2a_datapart_json>")[0]
+                                data_obj = json.loads(json_str)
+                                parts.append({"kind": "a2ui", "data": data_obj.get("data", {})})
+                        except Exception as e:
+                            print("Error decoding inlineData:", e)
+
+        if not parts:
+            parts = [{"kind": "text", "text": "(The agent didn't return a reply.)"}]
+        return JSONResponse({"parts": parts})
+
+    # Otherwise fallback to deployed A2A agent engine
     async with httpx.AsyncClient(headers=_auth_headers(), timeout=120) as client:
         card = await _get_card(client)
         factory = ClientFactory(
@@ -187,8 +244,6 @@ async def chat(req: Request):
                 parts.extend(_extract_parts(artifact.parts))
 
     if not parts:
-        # The turn produced no text or UI (e.g. the agent only ran tools, or a
-        # tool stalled). Be honest rather than silent.
         parts = [{"kind": "text", "text": "(The agent didn't return a reply.)"}]
     return JSONResponse({"parts": parts})
 
