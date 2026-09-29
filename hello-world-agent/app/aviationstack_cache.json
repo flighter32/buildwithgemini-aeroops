@@ -1,0 +1,192 @@
+{
+  "UA240": {
+    "flight_date": "2026-09-29",
+    "flight_status": "active",
+    "airline": { "name": "United Airlines", "iata": "UA", "icao": "UAL" },
+    "flight": { "number": "240", "iata": "UA240", "icao": "UAL240" },
+    "departure": {
+      "airport": "Cibao International Airport",
+      "timezone": "America/Santo_Domingo",
+      "iata": "STI",
+      "icao": "MDST",
+      "terminal": "1",
+      "gate": "B4",
+      "delay_minutes": 17,
+      "scheduled": "2026-09-29T06:00:00+00:00",
+      "estimated": "2026-09-29T06:15:00+00:00",
+      "actual": "2026-09-29T06:15:00+00:00"
+    },
+    "arrival": {
+      "airport": "Newark Liberty International",
+      "timezone": "America/New_York",
+      "iata": "EWR",
+      "icao": "KEWR",
+      "terminal": "B",
+      "gate": "BHOL",
+      "baggage_claim": "11",
+      "delay_minutes": 0,
+      "scheduled": "2026-09-29T09:50:00+00:00",
+      "estimated": "2026-09-29T09:50:00+00:00",
+      "actual": null
+    },
+    "aircraft": {
+      "registration": "N77576",
+      "model": "Boeing 737MAX 9",
+      "iata": "B39M",
+      "icao": "B39M",
+      "icao24": "AA7F06"
+    }
+  },
+  "DL693": {
+    "flight_date": "2026-09-29",
+    "flight_status": "active",
+    "airline": { "name": "Delta Air Lines", "iata": "DL", "icao": "DAL" },
+    "flight": { "number": "693", "iata": "DL693", "icao": "DAL693" },
+    "departure": {
+      "airport": "Hartsfield-Jackson Atlanta International",
+      "timezone": "America/New_York",
+      "iata": "ATL",
+      "icao": "KATL",
+      "terminal": "S",
+      "gate": "B17",
+      "delay_minutes": 15,
+      "scheduled": "2026-09-29T08:20:00+00:00",
+      "estimated": "2026-09-29T08:35:00+00:00",
+      "actual": "2026-09-29T08:35:00+00:00"
+    },
+    "arrival": {
+      "airport": "San Francisco International",
+      "timezone": "America/Los_Angeles",
+      "iata": "SFO",
+      "icao": "KSFO",
+      "terminal": "1",
+      "gate": "C9",
+      "baggage_claim": "8",
+      "delay_minutes": 0,
+      "scheduled": "2026-09-29T10:21:00+00:00",
+      "estimated": "2026-09-29T10:07:00+00:00",
+      "actual": null
+    },
+    "aircraft": {
+      "registration": "N552DT",
+      "model": "Airbus A321-271NX",
+      "iata": "A21N",
+      "icao": "A21N",
+      "icao24": "A70736"
+    }
+  },
+  "CX872": {
+    "flight_date": "2026-09-29",
+    "flight_status": "scheduled",
+    "airline": { "name": "Cathay Pacific", "iata": "CX", "icao": "CPA" },
+    "flight": { "number": "872", "iata": "CX872", "icao": "CPA872" },
+    "departure": {
+      "airport": "Hong Kong International",
+      "timezone": "Asia/Hong_Kong",
+      "iata": "HKG",
+      "icao": "VHHH",
+      "terminal": "1",
+      "gate": "40",
+      "delay_minutes": 10,
+      "scheduled": "2026-09-30T01:10:00+00:00",
+      "estimated": "2026-09-30T01:20:00+00:00",
+      "actual": null
+    },
+    "arrival": {
+      "airport": "San Francisco International",
+      "timezone": "America/Los_Angeles",
+      "iata": "SFO",
+      "icao": "KSFO",
+      "terminal": "I",
+      "gate": "A6",
+      "baggage_claim": "Carousel 3",
+      "delay_minutes": 0,
+      "scheduled": "2026-09-29T22:40:00+00:00",
+      "estimated": "2026-09-29T22:40:00+00:00",
+      "actual": null
+    },
+    "aircraft": {
+      "registration": "B-LRA",
+      "model": "Airbus A350-941",
+      "iata": "A359",
+      "icao": "A359",
+      "icao24": "780DE8"
+    }
+  },
+  "AA3101": {
+    "flight_date": "2026-09-29",
+    "flight_status": "active",
+    "airline": { "name": "American Airlines", "iata": "AA", "icao": "AAL" },
+    "flight": { "number": "3101", "iata": "AA3101", "icao": "AAL3101" },
+    "departure": {
+      "airport": "Detroit Metropolitan Wayne County",
+      "timezone": "America/Detroit",
+      "iata": "DTW",
+      "icao": "KDTW",
+      "terminal": "E",
+      "gate": "D31",
+      "delay_minutes": 0,
+      "scheduled": "2026-09-29T11:43:00+00:00",
+      "estimated": "2026-09-29T11:43:00+00:00",
+      "actual": "2026-09-29T11:45:00+00:00"
+    },
+    "arrival": {
+      "airport": "Dallas/Fort Worth International",
+      "timezone": "America/Chicago",
+      "iata": "DFW",
+      "icao": "KDFW",
+      "terminal": "C",
+      "gate": "C28",
+      "baggage_claim": "C25",
+      "delay_minutes": 0,
+      "scheduled": "2026-09-29T13:29:00+00:00",
+      "estimated": "2026-09-29T13:29:00+00:00",
+      "actual": null
+    },
+    "aircraft": {
+      "registration": "N836NN",
+      "model": "Boeing 737-823",
+      "iata": "B738",
+      "icao": "B738",
+      "icao24": "AB6FDD"
+    }
+  },
+  "UAL1750": {
+    "flight_date": "2026-09-29",
+    "flight_status": "active",
+    "airline": { "name": "United Airlines", "iata": "UA", "icao": "UAL" },
+    "flight": { "number": "1750", "iata": "UA1750", "icao": "UAL1750" },
+    "departure": {
+      "airport": "Kahului Airport",
+      "timezone": "Pacific/Honolulu",
+      "iata": "OGG",
+      "icao": "PHOG",
+      "terminal": "1",
+      "gate": "1",
+      "delay_minutes": 0,
+      "scheduled": "2026-09-28T22:30:00+00:00",
+      "estimated": "2026-09-28T22:30:00+00:00",
+      "actual": "2026-09-28T22:26:00+00:00"
+    },
+    "arrival": {
+      "airport": "San Francisco International",
+      "timezone": "America/Los_Angeles",
+      "iata": "SFO",
+      "icao": "KSFO",
+      "terminal": "3",
+      "gate": "F21",
+      "baggage_claim": "8",
+      "delay_minutes": 0,
+      "scheduled": "2026-09-29T06:29:00+00:00",
+      "estimated": "2026-09-29T06:07:00+00:00",
+      "actual": null
+    },
+    "aircraft": {
+      "registration": "N17364",
+      "model": "Boeing 737MAX 8",
+      "iata": "B38M",
+      "icao": "B38M",
+      "icao24": "A12799"
+    }
+  }
+}

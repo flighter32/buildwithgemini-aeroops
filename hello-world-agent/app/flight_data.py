@@ -1,0 +1,88 @@
+"""Mock Flight & Airport Operations Data Store.
+Provides flight tracking, aircraft turnaround states, gate allocations, and terminal map info.
+"""
+
+from typing import Dict, Any, List, Optional
+import datetime
+
+MOCK_FLIGHTS: Dict[str, Dict[str, Any]] = {
+    "UA240": {
+        "flight_number": "UA240",
+        "airline": "United Airlines",
+        "origin": "ORD (Chicago)",
+        "destination": "SFO (San Francisco)",
+        "scheduled_arrival": "14:15 PST",
+        "estimated_arrival": "14:45 PST",
+        "status": "In Air - Delayed",
+        "gate": "Gate F12",
+        "terminal": "Terminal 3",
+        "aircraft": "Boeing 777-200",
+        "tail_number": "N78003",
+        "passengers": 268,
+        "fuel_status": "Normal",
+        "turnaround_stage": "En Route (ETA: 30 mins)",
+        "inbound_delay_minutes": 30,
+        "coordinates": {"lat": 38.12, "lon": -121.85, "altitude_ft": 14000, "ground_speed_kts": 420},
+    },
+    "DL882": {
+        "flight_number": "DL882",
+        "airline": "Delta Air Lines",
+        "origin": "ATL (Atlanta)",
+        "destination": "SFO (San Francisco)",
+        "scheduled_arrival": "13:50 PST",
+        "estimated_arrival": "13:50 PST",
+        "status": "Landed - Taxiing",
+        "gate": "Gate C4",
+        "terminal": "Terminal 2",
+        "aircraft": "Airbus A321neo",
+        "tail_number": "N508DN",
+        "passengers": 194,
+        "fuel_status": "Normal",
+        "turnaround_stage": "Taxiing to Gate (Runway 28R -> Gate C4)",
+        "inbound_delay_minutes": 0,
+        "coordinates": {"lat": 37.6213, "lon": -122.3790, "altitude_ft": 0, "ground_speed_kts": 18},
+    },
+    "AA1054": {
+        "flight_number": "AA1054",
+        "airline": "American Airlines",
+        "origin": "DFW (Dallas/Fort Worth)",
+        "destination": "SFO (San Francisco)",
+        "scheduled_arrival": "14:30 PST",
+        "estimated_arrival": "14:25 PST",
+        "status": "At Gate - Turnaround",
+        "gate": "Gate B18",
+        "terminal": "Terminal 1",
+        "aircraft": "Boeing 737 MAX 9",
+        "tail_number": "N802AA",
+        "passengers": 172,
+        "fuel_status": "Refueling in progress",
+        "turnaround_stage": "Baggage Offload (65% complete), Catering ongoing",
+        "inbound_delay_minutes": 0,
+        "coordinates": {"lat": 37.6152, "lon": -122.3899, "altitude_ft": 0, "ground_speed_kts": 0},
+    },
+    "BA287": {
+        "flight_number": "BA287",
+        "airline": "British Airways",
+        "origin": "LHR (London Heathrow)",
+        "destination": "SFO (San Francisco)",
+        "scheduled_arrival": "16:10 PST",
+        "estimated_arrival": "16:55 PST",
+        "status": "In Air - Holding Pattern",
+        "gate": "Gate A8",
+        "terminal": "International Terminal A",
+        "aircraft": "Airbus A350-1000",
+        "tail_number": "G-XWBA",
+        "passengers": 331,
+        "fuel_status": "Adequate (Holding reserve active)",
+        "turnaround_stage": "En Route (Oceanic Approach)",
+        "inbound_delay_minutes": 45,
+        "coordinates": {"lat": 37.98, "lon": -122.95, "altitude_ft": 10000, "ground_speed_kts": 280},
+    },
+}
+
+MOCK_GATES: Dict[str, Dict[str, Any]] = {
+    "Gate F12": {"terminal": "Terminal 3", "status": "Available / Reserved for UA240", "jetbridge": "Operational", "power_unit": "Connected"},
+    "Gate C4": {"terminal": "Terminal 2", "status": "Occupied - DL882 docking", "jetbridge": "Aligning", "power_unit": "Standby"},
+    "Gate B18": {"terminal": "Terminal 1", "status": "Active Turnaround - AA1054", "jetbridge": "Connected", "power_unit": "Active (400Hz)"},
+    "Gate A8": {"terminal": "International Terminal A", "status": "Cleaning in progress before BA287", "jetbridge": "Operational", "power_unit": "Available"},
+}
